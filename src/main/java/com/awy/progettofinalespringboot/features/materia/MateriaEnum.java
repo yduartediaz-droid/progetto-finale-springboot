@@ -21,5 +21,6 @@ public enum MateriaEnum {
     CUCINA,
     GEOPOLITICA,
     ECONOMIA,
-    PSICOLOGIA
+    PSICOLOGIA,
+    LOGICA
 }
