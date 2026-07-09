@@ -1,4 +1,25 @@
 package com.awy.progettofinalespringboot.features.materia;
 
-public class MateriaEnum { //walter e un pollo
+public enum MateriaEnum {
+    MATEMATICA,
+    STORIA,
+    GEOGRAFIA,
+    GENERALE,
+    SCIENZE,
+    INFORMATICA,
+    LETTERATURA,
+    ARTE,
+    MUSICA,
+    SPORT,
+    CINEMA,
+    TECNOLOGIA,
+    CULTURA_POP,
+    EDUCAZIONE_CIVICA,
+    LINGUE,
+    CURIOSITA,
+    SALUTE_BENESSERE,
+    CUCINA,
+    GEOPOLITICA,
+    ECONOMIA,
+    PSICOLOGIA
 }
