@@ -1,6 +1,7 @@
 package com.awy.progettofinalespringboot.features.risposta;
 
 import com.awy.progettofinalespringboot.features.domanda.DomandaEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,5 +26,6 @@ public class RispostaEntity {
 
     @ManyToOne
     @JoinColumn(name = "id_domanda_fk", nullable = false)
+    @JsonIgnore
     private DomandaEntity domanda;
 }
