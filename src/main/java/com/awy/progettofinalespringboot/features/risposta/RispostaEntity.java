@@ -14,7 +14,8 @@ public class RispostaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id_risposta_pk")
+    private Long idRispostaPk;
 
     @Column(nullable = false)
     private String testo;
@@ -23,6 +24,6 @@ public class RispostaEntity {
     private boolean corretta;
 
     @ManyToOne
-    @JoinColumn(name = "domanda_id", nullable = false)
+    @JoinColumn(name = "id_domanda_fk", nullable = false)
     private DomandaEntity domanda;
 }

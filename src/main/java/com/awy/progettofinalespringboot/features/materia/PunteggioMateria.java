@@ -14,7 +14,8 @@ public class PunteggioMateria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idPunteggioMateria;
+    @Column(name = "id_punteggio_materia_pk")
+    private Long idPunteggioMateriaPk;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
