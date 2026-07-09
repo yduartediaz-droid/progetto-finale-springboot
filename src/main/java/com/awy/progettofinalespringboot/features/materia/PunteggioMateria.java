@@ -26,5 +26,5 @@ public class PunteggioMateria {
 
     @ManyToOne
     @JoinColumn(name = "id_utente_fk", nullable = false)
-    private UtenteEntity utente;
+    private UtenteEntity idUtenteFk;
 }
