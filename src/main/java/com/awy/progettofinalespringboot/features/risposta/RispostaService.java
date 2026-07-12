@@ -2,49 +2,64 @@ package com.awy.progettofinalespringboot.features.risposta;
 
 import com.awy.progettofinalespringboot.features.domanda.DomandaEntity;
 import com.awy.progettofinalespringboot.features.domanda.DomandaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.awy.progettofinalespringboot.features.risposta.RispostaResponseDTO;
+import com.awy.progettofinalespringboot.features.risposta.RispostaMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class RispostaService {
 
-    @Autowired
-    private RispostaRepository rispostaRepository;
+    private final RispostaRepository rispostaRepository;
+    private final DomandaRepository domandaRepository;
 
-    @Autowired
-    private DomandaRepository domandaRepository;
-
-    public List<RispostaEntity> getAll() {
-        return rispostaRepository.findAll();
+    public List<RispostaResponseDTO> getAll() {
+        return rispostaRepository.findAll()
+                .stream()
+                .map(RispostaMapper::toDTO)
+                .toList();
     }
 
-    public RispostaEntity getById(Long id) {
-        return rispostaRepository.findById(id)
+    public RispostaResponseDTO getById(Long id) {
+        RispostaEntity risposta = rispostaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Risposta non trovata con id: " + id));
+
+        return RispostaMapper.toDTO(risposta);
     }
 
-    public List<RispostaEntity> getByDomanda(Long idDomanda) {
-        return rispostaRepository.findByDomandaIdDomandaPk(idDomanda);
+    public List<RispostaResponseDTO> getByDomanda(Long idDomanda) {
+        return rispostaRepository.findByDomandaIdDomandaPk(idDomanda)
+                .stream()
+                .map(RispostaMapper::toDTO)
+                .toList();
     }
 
-    public RispostaEntity create(RispostaEntity risposta) {
+    public RispostaResponseDTO create(RispostaEntity risposta) {
+
         Long idDomanda = risposta.getDomanda().getIdDomandaPk();
+
         DomandaEntity domanda = domandaRepository.findById(idDomanda)
                 .orElseThrow(() -> new RuntimeException("Domanda non trovata con id: " + idDomanda));
 
         risposta.setDomanda(domanda);
-        return rispostaRepository.save(risposta);
+
+        RispostaEntity saved = rispostaRepository.save(risposta);
+        return RispostaMapper.toDTO(saved);
     }
 
-    public RispostaEntity update(Long id, RispostaEntity datiAggiornati) {
+    public RispostaResponseDTO update(Long id, RispostaEntity datiAggiornati) {
+
         RispostaEntity risposta = rispostaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Risposta non trovata con id: " + id));
 
         risposta.setTesto(datiAggiornati.getTesto());
         risposta.setCorretta(datiAggiornati.isCorretta());
-        return rispostaRepository.save(risposta);
+
+        RispostaEntity saved = rispostaRepository.save(risposta);
+        return RispostaMapper.toDTO(saved);
     }
 
     public void delete(Long id) {

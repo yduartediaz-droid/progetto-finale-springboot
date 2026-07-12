@@ -1,13 +1,17 @@
 package com.awy.progettofinalespringboot.features.domanda;
 
-import com.awy.progettofinalespringboot.features.materia.DifficoltaEnum;
+import com.awy.progettofinalespringboot.features.difficolta.DifficoltaEnum;
 import com.awy.progettofinalespringboot.features.materia.MateriaEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/domande")
@@ -16,24 +20,24 @@ public class DomandaController {
     private final DomandaService domandaService;
 
     @GetMapping
-    public List<DomandaEntity> getAll() {
+    public List<DomandaResponseDTO> getAll() {
         return domandaService.getAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DomandaEntity> getById(@PathVariable Long id) {
-        DomandaEntity domanda = domandaService.getById(id);
-        return domanda != null ? ResponseEntity.ok(domanda) : ResponseEntity.notFound().build();
+    public ResponseEntity<DomandaResponseDTO> getById(@PathVariable Long id) {
+        DomandaResponseDTO dto = domandaService.getById(id);
+        return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<DomandaEntity> create(@RequestBody DomandaEntity domanda) {
+    public ResponseEntity<DomandaResponseDTO> create(@RequestBody DomandaEntity domanda) {
         return ResponseEntity.ok(domandaService.create(domanda));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DomandaEntity> update(@PathVariable Long id, @RequestBody DomandaEntity domanda) {
-        DomandaEntity updated = domandaService.update(id, domanda);
+    public ResponseEntity<DomandaResponseDTO> update(@PathVariable Long id, @RequestBody DomandaEntity domanda) {
+        DomandaResponseDTO updated = domandaService.update(id, domanda);
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
@@ -44,29 +48,47 @@ public class DomandaController {
     }
 
     @GetMapping("/materia/{materia}")
-    public List<DomandaEntity> getByMateria(@PathVariable MateriaEnum materia) {
+    public List<DomandaResponseDTO> getByMateria(@PathVariable MateriaEnum materia) {
         return domandaService.getByMateria(materia);
     }
 
     @GetMapping("/difficolta/{difficolta}")
-    public List<DomandaEntity> getByDifficolta(@PathVariable DifficoltaEnum difficolta) {
+    public List<DomandaResponseDTO> getByDifficolta(@PathVariable DifficoltaEnum difficolta) {
         return domandaService.getByDifficolta(difficolta);
     }
 
     @GetMapping("/filter")
-    public List<DomandaEntity> getByMateriaAndDifficolta(
+    public List<DomandaResponseDTO> getByMateriaAndDifficolta(
             @RequestParam MateriaEnum materia,
             @RequestParam DifficoltaEnum difficolta) {
         return domandaService.getByMateriaAndDifficolta(materia, difficolta);
     }
 
     @GetMapping("/next")
-    public ResponseEntity<List<DomandaEntity>> getRandomDomande(
-            @RequestParam int count
-    ) {
-        List<DomandaEntity> domande = domandaService.getRandomDomande(count);
-        return ResponseEntity.ok(domande);
+    public ResponseEntity<List<DomandaResponseDTO>> getRandomDomande(@RequestParam int count) {
+        return ResponseEntity.ok(domandaService.getRandomDomande(count));
     }
 
+    @GetMapping("/livello/{livello}")
+    public ResponseEntity<List<DomandaResponseDTO>> getDomandeByLivello(@PathVariable String livello) {
+
+        int count;
+
+        switch (livello.toUpperCase()) {
+            case "FACILE": count = 10; break;
+            case "MEDIO": count = 15; break;
+            case "DIFFICILE": count = 25; break;
+            default: return ResponseEntity.badRequest().build();
+        }
+
+        List<DomandaResponseDTO> tutte = new ArrayList<>(domandaService.getAll());
+        Collections.shuffle(tutte);
+
+        List<DomandaResponseDTO> selezionate = tutte.stream()
+                .limit(count)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(selezionate);
+    }
 
 }

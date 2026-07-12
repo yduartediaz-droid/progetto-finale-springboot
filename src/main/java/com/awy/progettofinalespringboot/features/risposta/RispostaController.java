@@ -1,7 +1,7 @@
 package com.awy.progettofinalespringboot.features.risposta;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import com.awy.progettofinalespringboot.features.risposta.RispostaResponseDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,34 +9,33 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/risposte")
+@RequiredArgsConstructor
 public class RispostaController {
 
-    @Autowired
-    private RispostaService rispostaService;
+    private final RispostaService rispostaService;
 
     @GetMapping
-    public List<RispostaEntity> getAll() {
+    public List<RispostaResponseDTO> getAll() {
         return rispostaService.getAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RispostaEntity> getById(@PathVariable Long id) {
+    public ResponseEntity<RispostaResponseDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(rispostaService.getById(id));
     }
 
     @GetMapping("/domanda/{idDomanda}")
-    public List<RispostaEntity> getByDomanda(@PathVariable Long idDomanda) {
+    public List<RispostaResponseDTO> getByDomanda(@PathVariable Long idDomanda) {
         return rispostaService.getByDomanda(idDomanda);
     }
 
     @PostMapping
-    public ResponseEntity<RispostaEntity> create(@RequestBody RispostaEntity risposta) {
-        RispostaEntity salvata = rispostaService.create(risposta);
-        return ResponseEntity.status(HttpStatus.CREATED).body(salvata);
+    public ResponseEntity<RispostaResponseDTO> create(@RequestBody RispostaEntity risposta) {
+        return ResponseEntity.status(201).body(rispostaService.create(risposta));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RispostaEntity> update(@PathVariable Long id, @RequestBody RispostaEntity datiAggiornati) {
+    public ResponseEntity<RispostaResponseDTO> update(@PathVariable Long id, @RequestBody RispostaEntity datiAggiornati) {
         return ResponseEntity.ok(rispostaService.update(id, datiAggiornati));
     }
 

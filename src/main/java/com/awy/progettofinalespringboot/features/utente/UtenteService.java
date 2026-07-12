@@ -1,9 +1,13 @@
 package com.awy.progettofinalespringboot.features.utente;
 
+import com.awy.progettofinalespringboot.features.utente.LoginRequestDTO;
+import com.awy.progettofinalespringboot.features.utente.RegisterRequestDTO;
+import com.awy.progettofinalespringboot.features.utente.UtenteResponseDTO;
+import com.awy.progettofinalespringboot.features.utente.UtenteMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -11,35 +15,35 @@ public class UtenteService {
 
     private final UtenteRepository utenteRepository;
 
-    public List<UtenteEntity> getAll() {
-        return utenteRepository.findAll();
+    public UtenteResponseDTO register(RegisterRequestDTO dto) {
+
+        if (utenteRepository.existsByUsername(dto.getUsername())) {
+            throw new RuntimeException("Username già esistente");
+        }
+
+        UtenteEntity nuovo = UtenteEntity.builder()
+                .username(dto.getUsername())
+                .passwordHash(dto.getPassword()) // ⚠️ per ora senza BCrypt
+                .dataCreazione(LocalDateTime.now())
+                .build();
+
+        utenteRepository.save(nuovo);
+
+        return UtenteMapper.toDTO(nuovo);
     }
 
-    public UtenteEntity getById(Long id) {
-        return utenteRepository.findById(id)
-                .orElse(null);
-    }
+    public UtenteResponseDTO login(LoginRequestDTO dto) {
 
-    public UtenteEntity create(UtenteEntity utente) {
-        return utenteRepository.save(utente);
-    }
+        UtenteEntity utente = utenteRepository.findByUsername(dto.getUsername())
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
 
-    public UtenteEntity update(Long id, UtenteEntity updated) {
-        UtenteEntity existing = getById(id);
-        if (existing == null) return null;
+        if (!utente.getPasswordHash().equals(dto.getPassword())) {
+            throw new RuntimeException("Password errata");
+        }
 
-        existing.setUsername(updated.getUsername());
-        existing.setPuntiTotali(updated.getPuntiTotali());
+        utente.setUltimoAccesso(LocalDateTime.now());
+        utenteRepository.save(utente);
 
-        return utenteRepository.save(existing);
-    }
-
-    public void delete(Long id) {
-        utenteRepository.deleteById(id);
-    }
-
-    // Classifica generale
-    public List<UtenteEntity> getClassificaGenerale() {
-        return utenteRepository.findAllByOrderByPuntiTotaliDesc();
+        return UtenteMapper.toDTO(utente);
     }
 }

@@ -1,14 +1,14 @@
 package com.awy.progettofinalespringboot.features.domanda;
 
-import com.awy.progettofinalespringboot.features.materia.DifficoltaEnum;
+import com.awy.progettofinalespringboot.features.difficolta.DifficoltaEnum;
 import com.awy.progettofinalespringboot.features.materia.MateriaEnum;
-import com.awy.progettofinalespringboot.features.risposta.RispostaEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,96 +16,70 @@ public class DomandaService {
 
     private final DomandaRepository domandaRepository;
 
-    // ---------------------------------------------------------
-    // GET ALL
-    // ---------------------------------------------------------
-    public List<DomandaEntity> getAll() {
-        return domandaRepository.findAll();
+    public List<DomandaResponseDTO> getAll() {
+        return domandaRepository.findAll()
+                .stream()
+                .map(DomandaMapper::toDTO)
+                .collect(Collectors.toList()); // LISTA MUTABILE
     }
 
-    // ---------------------------------------------------------
-    // GET BY ID
-    // ---------------------------------------------------------
-    public DomandaEntity getById(Long id) {
-        return domandaRepository.findById(id).orElse(null);
+    public DomandaResponseDTO getById(Long id) {
+        return domandaRepository.findById(id)
+                .map(DomandaMapper::toDTO)
+                .orElse(null);
     }
 
-    // ---------------------------------------------------------
-    // CREATE
-    // ---------------------------------------------------------
-    public DomandaEntity create(DomandaEntity domanda) {
-
-        // Se la lista è null, inizializzala
-        if (domanda.getRisposte() == null) {
-            domanda.setRisposte(new ArrayList<>());
-        }
-
-        // 🔥 Collega ogni risposta alla domanda
-        for (RispostaEntity r : domanda.getRisposte()) {
-            r.setDomanda(domanda);
-        }
-
-        return domandaRepository.save(domanda);
+    public DomandaResponseDTO create(DomandaEntity domanda) {
+        DomandaEntity saved = domandaRepository.save(domanda);
+        return DomandaMapper.toDTO(saved);
     }
 
-    // ---------------------------------------------------------
-    // UPDATE
-    // ---------------------------------------------------------
-    public DomandaEntity update(Long id, DomandaEntity updated) {
-        DomandaEntity existing = getById(id);
-        if (existing == null) return null;
-
-        existing.setTesto(updated.getTesto());
-        existing.setMateria(updated.getMateria());
-        existing.setDifficolta(updated.getDifficolta());
-        existing.setCuriosita(updated.getCuriosita());
-
-        // 🔥 Aggiorna correttamente la lista delle risposte
-        existing.getRisposte().clear();
-
-        if (updated.getRisposte() != null) {
-            for (RispostaEntity r : updated.getRisposte()) {
-                r.setDomanda(existing);
-                existing.getRisposte().add(r);
-            }
-        }
-
-        return domandaRepository.save(existing);
+    public DomandaResponseDTO update(Long id, DomandaEntity dati) {
+        return domandaRepository.findById(id)
+                .map(existing -> {
+                    existing.setTesto(dati.getTesto());
+                    existing.setMateria(dati.getMateria());
+                    existing.setDifficolta(dati.getDifficolta());
+                    existing.setCuriosita(dati.getCuriosita());
+                    DomandaEntity saved = domandaRepository.save(existing);
+                    return DomandaMapper.toDTO(saved);
+                })
+                .orElse(null);
     }
 
-    // ---------------------------------------------------------
-    // DELETE
-    // ---------------------------------------------------------
     public void delete(Long id) {
-        domandaRepository.deleteById(id);
+        if (domandaRepository.existsById(id)) {
+            domandaRepository.deleteById(id);
+        }
     }
 
-    // ---------------------------------------------------------
-    // FILTERS
-    // ---------------------------------------------------------
-    public List<DomandaEntity> getByMateria(MateriaEnum materia) {
-        return domandaRepository.findByMateria(materia);
+    public List<DomandaResponseDTO> getByMateria(MateriaEnum materia) {
+        return domandaRepository.findByMateria(materia)
+                .stream()
+                .map(DomandaMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public List<DomandaEntity> getByDifficolta(DifficoltaEnum difficolta) {
-        return domandaRepository.findByDifficolta(difficolta);
+    public List<DomandaResponseDTO> getByDifficolta(DifficoltaEnum difficolta) {
+        return domandaRepository.findByDifficolta(difficolta)
+                .stream()
+                .map(DomandaMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public List<DomandaEntity> getByMateriaAndDifficolta(MateriaEnum materia, DifficoltaEnum difficolta) {
-        return domandaRepository.findByMateriaAndDifficolta(materia, difficolta);
+    public List<DomandaResponseDTO> getByMateriaAndDifficolta(MateriaEnum materia, DifficoltaEnum difficolta) {
+        return domandaRepository.findByMateriaAndDifficolta(materia, difficolta)
+                .stream()
+                .map(DomandaMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public List<DomandaEntity> getRandomDomande(int count) {
-        List<DomandaEntity> tutte = domandaRepository.findAll();
-
-        // Mescola le domande
+    public List<DomandaResponseDTO> getRandomDomande(int count) {
+        List<DomandaResponseDTO> tutte = new ArrayList<>(getAll());
+        if (tutte.isEmpty()) return List.of();
         Collections.shuffle(tutte);
-
-        // Prendi solo "count" domande
         return tutte.stream()
                 .limit(count)
-                .toList();
+                .collect(Collectors.toList());
     }
-
-
 }

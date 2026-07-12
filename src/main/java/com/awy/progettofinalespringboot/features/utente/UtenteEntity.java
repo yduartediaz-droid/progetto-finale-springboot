@@ -2,6 +2,7 @@ package com.awy.progettofinalespringboot.features.utente;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -15,9 +16,15 @@ public class UtenteEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUtentePk;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100, unique = true)
     private String username;
 
+    @Column(nullable = false, length = 255)
+    private String passwordHash;
+
     @Column(nullable = false)
-    private int puntiTotali;
+    private LocalDateTime dataCreazione;
+
+    @Column
+    private LocalDateTime ultimoAccesso;
 }
