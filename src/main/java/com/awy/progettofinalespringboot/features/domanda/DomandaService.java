@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -93,4 +94,18 @@ public class DomandaService {
     public List<DomandaEntity> getByMateriaAndDifficolta(MateriaEnum materia, DifficoltaEnum difficolta) {
         return domandaRepository.findByMateriaAndDifficolta(materia, difficolta);
     }
+
+    public List<DomandaEntity> getRandomDomande(int count) {
+        List<DomandaEntity> tutte = domandaRepository.findAll();
+
+        // Mescola le domande
+        Collections.shuffle(tutte);
+
+        // Prendi solo "count" domande
+        return tutte.stream()
+                .limit(count)
+                .toList();
+    }
+
+
 }

@@ -45,4 +45,6 @@ public class UtenteController {
     public List<UtenteEntity> getClassificaGenerale() {
         return utenteService.getClassificaGenerale();
     }
+
+
 }

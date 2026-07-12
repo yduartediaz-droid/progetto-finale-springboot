@@ -59,4 +59,14 @@ public class DomandaController {
             @RequestParam DifficoltaEnum difficolta) {
         return domandaService.getByMateriaAndDifficolta(materia, difficolta);
     }
+
+    @GetMapping("/next")
+    public ResponseEntity<List<DomandaEntity>> getRandomDomande(
+            @RequestParam int count
+    ) {
+        List<DomandaEntity> domande = domandaService.getRandomDomande(count);
+        return ResponseEntity.ok(domande);
+    }
+
+
 }
