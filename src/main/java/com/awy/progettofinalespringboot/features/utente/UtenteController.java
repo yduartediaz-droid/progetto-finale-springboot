@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "*")
+
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class UtenteController {
