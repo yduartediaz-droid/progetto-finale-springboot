@@ -1,4 +1,4 @@
-package com.awy.progettofinalespringboot.features.materia;
+package com.awy.progettofinalespringboot.features.difficolta;
 
 public enum DifficoltaEnum {
     FACILE,

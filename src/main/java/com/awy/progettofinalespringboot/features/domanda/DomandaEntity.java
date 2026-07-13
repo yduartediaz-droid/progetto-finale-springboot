@@ -1,23 +1,23 @@
 package com.awy.progettofinalespringboot.features.domanda;
 
-import com.awy.progettofinalespringboot.features.materia.DifficoltaEnum;
 import com.awy.progettofinalespringboot.features.materia.MateriaEnum;
+import com.awy.progettofinalespringboot.features.difficolta.DifficoltaEnum;
 import com.awy.progettofinalespringboot.features.risposta.RispostaEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.util.List;
 
 @Entity
+@Table(name = "tb_domande")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "tb_domande")
 public class DomandaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_domanda_pk")
     private Long idDomandaPk;
 
     @Column(nullable = false)
@@ -31,7 +31,7 @@ public class DomandaEntity {
     @Column(nullable = false)
     private DifficoltaEnum difficolta;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(nullable = false)
     private String curiosita;
 
     @OneToMany(mappedBy = "domanda", cascade = CascadeType.ALL, orphanRemoval = true)
