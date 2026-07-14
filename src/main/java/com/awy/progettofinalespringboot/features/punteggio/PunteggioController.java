@@ -1,9 +1,9 @@
 package com.awy.progettofinalespringboot.features.punteggio;
 
-import com.awy.progettofinalespringboot.features.punteggio.PunteggioRequestDTO;
-import com.awy.progettofinalespringboot.features.punteggio.PunteggioResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/punteggi")
@@ -17,4 +17,15 @@ public class PunteggioController {
         return punteggioService.salvaPunteggio(dto);
     }
 
+    // 🔥 CLASSIFICA PER LIVELLO (FACILE / MEDIO / DIFFICILE)
+    @GetMapping("/classifica/{livello}")
+    public List<PunteggioResponseDTO> getClassificaPerLivello(@PathVariable String livello) {
+        return punteggioService.getClassificaPerLivello(livello);
+    }
+
+    // 🔥 CLASSIFICA COMPLETA (opzionale)
+    @GetMapping("/classifica")
+    public List<PunteggioResponseDTO> getClassificaCompleta() {
+        return punteggioService.getClassificaCompleta();
+    }
 }
