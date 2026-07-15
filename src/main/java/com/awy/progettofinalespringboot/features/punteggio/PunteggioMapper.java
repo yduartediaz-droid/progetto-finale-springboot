@@ -1,7 +1,4 @@
-package com.awy.progettofinalespringboot.features.punteggio.mapper;
-
-import com.awy.progettofinalespringboot.features.punteggio.PunteggioEntity;
-import com.awy.progettofinalespringboot.features.punteggio.PunteggioResponseDTO;
+package com.awy.progettofinalespringboot.features.punteggio;
 
 public class PunteggioMapper {
 
@@ -9,6 +6,7 @@ public class PunteggioMapper {
         return PunteggioResponseDTO.builder()
                 .idPunteggio(entity.getIdPunteggioPk())
                 .idUtente(entity.getUtente().getIdUtentePk())
+                .username(entity.getUtente().getUsername())   // 🔥 AGGIUNTO
                 .livello(entity.getLivello().name())
                 .punteggioFinale(entity.getPunteggioFinale())
                 .risposteCorrette(entity.getRisposteCorrette())

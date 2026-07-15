@@ -6,8 +6,10 @@ import lombok.Data;
 @Data
 @Builder
 public class PunteggioResponseDTO {
+
     private Long idPunteggio;
     private Long idUtente;
+    private String username;     // 🔥 AGGIUNTO
     private String livello;
     private int punteggioFinale;
     private int risposteCorrette;
